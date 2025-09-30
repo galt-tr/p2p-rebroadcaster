@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  p2p-relay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: p2p-relay:latest
+    container_name: p2p-relay
+    restart: unless-stopped
+
+    # Mount configuration file
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - relay-data:/app/data
+
+    # Network configuration
+    ports:
+      # Private DHT port
+      - "4001:4001"
+      # Public DHT port
+      - "4002:4002"
+      # Metrics port
+      - "8080:8080"
+      # Health port
+      - "8081:8081"
+
+    # Environment variables (optional overrides)
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - METRICS_ENABLED=${METRICS_ENABLED:-true}
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  relay-data:
+    driver: local

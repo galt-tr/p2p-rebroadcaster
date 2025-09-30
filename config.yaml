@@ -1,0 +1,92 @@
+# P2P Relay Service Configuration
+
+# Service Configuration
+service:
+  log_level: info  # debug, info, warn, error
+  metrics_port: 8080
+  health_port: 8081
+
+# Private DHT Configuration (Source)
+private_dht:
+  # Network configuration
+  topic_prefix: "bitcoin/teratestnet"
+
+  # Bootstrap peers for private DHT
+  bootstrap_peers:
+    - "/dns4/teranode-bootstrap.bsvb.tech/tcp/9901/p2p/12D3KooWESmhNAN8s6NPdGNvJH3zJ4wMKDxapXKNUe2DzkAwKYqK"
+    - "/dns4/teranode-bootstrap-stage.bsvb.tech/tcp/9901/p2p/12D3KooWJ6kQHAR65xkA34NABsNVAJyVxPWh8JUSo1vtZsTyw4GD"
+  shared_key: "285b49e6d910726a70f205086c39cbac6d8dcc47839053a21b1f614773bbc137"
+  dht_protocol_id: "/teranode"
+
+  # P2P port
+  listen_port: 4001
+
+  # Topics to subscribe (will be prefixed with topic_prefix)
+  topics:
+    - "blocks"
+    - "subtrees"
+    - "handshake"
+    - "node_status"
+    - "mining-on"
+    - "rejected-tx"
+
+# Public DHT Configuration (Destination)
+public_dht:
+  # Network configuration
+  topic_prefix: "bitcoin/teratestnet"
+
+  # Bootstrap peers for public DHT
+  bootstrap_peers:
+    - "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
+    - "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
+
+  # P2P port
+  listen_port: 4002
+
+  # Topics to publish (will be prefixed with topic_prefix)
+  topics:
+    - "blocks"
+    - "subtrees"
+    - "handshake"
+    - "node_status"
+    - "mining-on"
+    - "rejected-tx"
+
+# Relay Configuration
+relay:
+  # Message buffer size
+  buffer_size: 10000
+
+  # Message deduplication
+  dedup_cache_size: 100000
+  dedup_cache_ttl: 300s  # 5 minutes
+
+  # Retry configuration
+  max_retries: 3
+  retry_delay: 1s
+
+  # Rate limiting
+  rate_limit:
+    enabled: false
+    max_messages_per_second: 1000
+
+  # Message filtering
+  filter:
+    enabled: false
+    # Optional: only relay messages from specific peers
+    allowed_peers: []
+    # Optional: block messages from specific peers
+    blocked_peers: []
+
+# Monitoring
+monitoring:
+  # Prometheus metrics
+  metrics_enabled: true
+
+  # Statistics reporting interval
+  stats_interval: 30s
+
+  # Alert thresholds
+  alerts:
+    max_lag_messages: 1000
+    max_error_rate: 0.01  # 1%
