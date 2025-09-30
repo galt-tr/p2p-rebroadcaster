@@ -5,6 +5,7 @@ service:
   log_level: info  # debug, info, warn, error
   metrics_port: 8080
   health_port: 8081
+  key_dir: "./keys"  # Directory to store persistent node keys
 
 # Private DHT Configuration (Source)
 private_dht:
@@ -15,6 +16,7 @@ private_dht:
   bootstrap_peers:
     - "/dns4/teranode-bootstrap.bsvb.tech/tcp/9901/p2p/12D3KooWESmhNAN8s6NPdGNvJH3zJ4wMKDxapXKNUe2DzkAwKYqK"
     - "/dns4/teranode-bootstrap-stage.bsvb.tech/tcp/9901/p2p/12D3KooWJ6kQHAR65xkA34NABsNVAJyVxPWh8JUSo1vtZsTyw4GD"
+    - "/ip4/10.0.0.33/tcp/9915/p2p/12D3KooWA7iLKEsGC3aKmSCaobVcWPSRhqxPh5zNeAwCWWmWzGb9"
   shared_key: "285b49e6d910726a70f205086c39cbac6d8dcc47839053a21b1f614773bbc137"
   dht_protocol_id: "/teranode"
 
@@ -54,8 +56,14 @@ public_dht:
 
 # Relay Configuration
 relay:
-  # Message buffer size
+  # Enable bidirectional relay (public->private in addition to private->public)
+  bidirectional: true
+
+  # Message buffer size for private->public relay
   buffer_size: 10000
+
+  # Message buffer size for public->private relay (optional, defaults to buffer_size/2)
+  reverse_buffer_size: 5000
 
   # Message deduplication
   dedup_cache_size: 100000

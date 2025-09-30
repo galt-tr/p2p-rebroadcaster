@@ -67,12 +67,17 @@ type SubtreeMessage struct {
 
 // RelayStats tracks relay performance metrics
 type RelayStats struct {
-	MessagesRelayed   uint64
-	BytesTransferred  uint64
-	ErrorCount        uint64
-	LastMessageTime   time.Time
-	ConnectionsActive int
-	StartTime         time.Time
+	MessagesRelayed        uint64
+	BytesTransferred       uint64
+	ErrorCount             uint64
+	LastMessageTime        time.Time
+	ConnectionsActive      int
+	StartTime              time.Time
+	// Bidirectional stats
+	ReverseMessagesRelayed uint64
+	ReverseBytesTransferred uint64
+	ReverseErrorCount      uint64
+	ReverseLastMessageTime time.Time
 }
 
 // Config represents the complete configuration for the relay service
@@ -89,6 +94,7 @@ type ServiceConfig struct {
 	LogLevel    string `yaml:"log_level"`
 	MetricsPort int    `yaml:"metrics_port"`
 	HealthPort  int    `yaml:"health_port"`
+	KeyDir      string `yaml:"key_dir"`  // Directory to store persistent keys
 }
 
 // DHTConfig contains configuration for a DHT node
@@ -103,13 +109,15 @@ type DHTConfig struct {
 
 // RelayConfig contains relay-specific settings
 type RelayConfig struct {
-	BufferSize       int               `yaml:"buffer_size"`
-	DedupCacheSize   int               `yaml:"dedup_cache_size"`
-	DedupCacheTTL    time.Duration     `yaml:"dedup_cache_ttl"`
-	MaxRetries       int               `yaml:"max_retries"`
-	RetryDelay       time.Duration     `yaml:"retry_delay"`
-	RateLimit        RateLimitConfig   `yaml:"rate_limit"`
-	Filter           FilterConfig      `yaml:"filter"`
+	BufferSize          int               `yaml:"buffer_size"`
+	DedupCacheSize      int               `yaml:"dedup_cache_size"`
+	DedupCacheTTL       time.Duration     `yaml:"dedup_cache_ttl"`
+	MaxRetries          int               `yaml:"max_retries"`
+	RetryDelay          time.Duration     `yaml:"retry_delay"`
+	RateLimit           RateLimitConfig   `yaml:"rate_limit"`
+	Filter              FilterConfig      `yaml:"filter"`
+	Bidirectional       bool              `yaml:"bidirectional"`
+	ReverseBufferSize   int               `yaml:"reverse_buffer_size,omitempty"`
 }
 
 // RateLimitConfig contains rate limiting settings

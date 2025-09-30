@@ -32,8 +32,10 @@ Thumbs.db
 # Configuration files with secrets
 config.local.yaml
 config.prod.yaml
-*.key
 *.pem
+
+# Persistent keys directory
+keys/
 
 # Docker volumes
 relay-data/
